@@ -1,5 +1,6 @@
 ﻿using System.Net.Http.Json;
 
+
 namespace ContactsCRUD.Client.Services.ContactsService
 {
     public class ContactService : IContactService
@@ -28,9 +29,17 @@ namespace ContactsCRUD.Client.Services.ContactsService
             }
         }
 
-        public Task<Contact> GetSingleContact(int id)
+        public async Task<Contact> GetSingleContact(int id)
         {
-            throw new NotImplementedException();
+            var result = await _http.GetFromJsonAsync<Contact>($"api/contact/{id}");
+            if (result is not null)
+            {
+                return result;
+            }
+            else
+            {
+                throw new Exception("Contact not found!");
+            }
         }
     }
 }

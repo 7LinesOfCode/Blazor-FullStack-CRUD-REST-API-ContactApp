@@ -1,0 +1,34 @@
+﻿@page "/contact"
+@page "/contact/{id:int}"
+@inject IContactService ContactService
+
+
+
+@if(Id is null)
+{
+    <PageTitle>Create a new Contact</PageTitle>
+    <h3>Create a new Contact</h3>
+}
+else
+{
+    <h3>Edit @contact.FirstName @contact.LastName</h3>
+}
+
+@code {
+    [Parameter]
+    public int? Id { get; set; }
+
+    Contact contact = new Contact { Category = new Category()};
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if(Id is null)
+        {
+            //Create
+        }
+        else
+        {
+            contact = await ContactService.GetSingleContact((int)Id);
+        }
+    }
+}

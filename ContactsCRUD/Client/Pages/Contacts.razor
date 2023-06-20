@@ -1,6 +1,6 @@
 ﻿@page "/contacts"
 @inject IContactService ContactService
-
+@inject NavigationManager NavigarionManager
 
 <PageTitle>ContactsApp</PageTitle>
 <h3>Your Contacts</h3>
@@ -26,7 +26,7 @@
                     <td>@contact.Category.Name</td>
                     <td>@contact.Note</td>
                     <td>
-                        <button class="btn btn-primary" ><i class="oi oi-pencil"></i></button>
+                        <button class="btn btn-primary" @onclick="(() => ShowContact(contact.Id))" ><i class="oi oi-pencil"></i></button>
                     </td>
                 </tr>
         }
@@ -39,5 +39,8 @@
         await ContactService.GetContacts();
     }
 
-
+    void ShowContact(int id)
+    {
+        NavigarionManager.NavigateTo($"contact/{id}");
+    }
 }
