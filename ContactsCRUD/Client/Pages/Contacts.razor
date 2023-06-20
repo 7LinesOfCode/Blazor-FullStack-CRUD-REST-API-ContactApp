@@ -3,9 +3,9 @@
 
 
 <PageTitle>ContactsApp</PageTitle>
-<h3>Contacts</h3>
+<h3>Your Contacts</h3>
 
-<table>
+<table class="table">
     <thead>
         <tr>
             <th>First Name</th>
@@ -34,5 +34,10 @@
 </table>
 
 @code {
+    protected override async Task OnInitializedAsync()
+    {
+        await ContactService.GetContacts();
+    }
+
 
 }
