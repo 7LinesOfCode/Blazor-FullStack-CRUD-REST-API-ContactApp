@@ -35,7 +35,6 @@ namespace ContactsCRUD.Client.Services.ContactsService
         public async Task DeleteContact(int id)
         {
             var result = await _http.DeleteAsync($"api/contact/{id}");
-            var response = await result.Content.ReadFromJsonAsync<List<Contact>>();
             await SetContact(result);
         }
 
