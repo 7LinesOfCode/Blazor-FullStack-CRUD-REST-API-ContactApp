@@ -10,5 +10,9 @@
         Task GetContacts();
 
         Task<Contact> GetSingleContact(int id);
+        Task CreateContact(Contact contact);
+        Task UpdateContact(Contact contact);
+        Task DeleteContact(int id);
+
     }
 }

@@ -1,4 +1,5 @@
-﻿using ContactsCRUD.Shared;
+﻿using ContactsCRUD.Server.Data;
+using ContactsCRUD.Shared;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,47 +9,35 @@ namespace ContactsCRUD.Server.Controllers
     [ApiController]
     public class ContactController : ControllerBase
     {
-        public static List<Category> categories = new List<Category>()
+        private readonly DataContext _context;
+        public ContactController(DataContext context)
         {
-            new Category {Id = 1, Name = "Private"},
-            new Category {Id = 2, Name = "Work"},
-            new Category {Id = 3, Name = "Other"},
-        };
-
-        public static List<Contact> contacts = new List<Contact>()
-        {
-            new Contact
-            {
-                Id = 1,
-                FirstName ="Jan",
-                LastName ="Brzechwa",
-                PhoneNumber = "123 123 123",
-                Category = categories[0],
-                Note = "",  
-            },
-            new Contact
-            {
-                Id = 2,
-                FirstName ="Net",
-                LastName ="Pc",
-                PhoneNumber = "123 123 123",
-                Category = categories[1],
-                Note = "",
-            }
-        };
-
+            _context= context;
+        }
 
         [HttpGet]
         public async Task<ActionResult<List<Contact>>> GetContacts()
         {
+            var contacts = await _context.Contacts.Include(c => c.Category).ToListAsync();
             return Ok(contacts);
         }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<List<Contact>>> GetSingleContact(int id)
+        [HttpGet("categories")]
+        public async Task<ActionResult<List<Contact>>> GetCategories()
         {
-            var contact = contacts.FirstOrDefault(c=>c.Id ==id );
-            if(contact is null)
+            var categories = await _context.Categories.ToListAsync();
+            return Ok(categories);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Contact>> GetSingleContact(int id)
+        {
+            var contact = await _context
+                .Contacts
+                .Include(c=>c.Category)
+                .FirstOrDefaultAsync(c => c.Id == id);
+
+            if (contact is null)
             {
                 return NotFound($"Contact with id:{id} not found");
             }
@@ -57,6 +46,66 @@ namespace ContactsCRUD.Server.Controllers
                 return Ok(contact);
             }
             
+        }
+
+
+        [HttpPost]
+        public async Task<ActionResult<List<Contact>>> CreateContact(Contact contact)
+        {
+            contact.Category = null;
+            _context.Contacts.Add(contact);
+            await _context.SaveChangesAsync();
+            return Ok(await GetDbContacts());
+        }
+
+        [HttpPut("{id:int}")]
+        public async Task<ActionResult<List<Contact>>> UpdateContact(Contact contact, int id)
+        {
+            var dbContact = await _context.Contacts
+                .Include(c=>c.Category)
+                .FirstOrDefaultAsync(c => c.Id == id);
+
+            if (dbContact is null)
+            {
+                return NotFound("Not contact founded");
+            }
+            else
+            {
+                dbContact.FirstName = contact.FirstName;
+                dbContact.LastName = contact.LastName;
+                dbContact.PhoneNumber = contact.PhoneNumber;
+                dbContact.Note = contact.Note;
+                dbContact.CategoryId = contact.CategoryId;
+
+                await _context.SaveChangesAsync();
+
+                return Ok(await GetDbContacts());
+            }
+        }
+
+        [HttpDelete("{id:int}")]
+        public async Task<ActionResult<List<Contact>>> UpdateContact(int id)
+        {
+            var dbContact = await _context.Contacts
+                .Include(c => c.Category)
+                .FirstOrDefaultAsync(c => c.Id == id);
+
+            if (dbContact is null)
+            {
+                return NotFound("Not contact founded");
+            }
+            else
+            {
+                _context.Contacts.Remove(dbContact);
+                await _context.SaveChangesAsync();
+
+                return Ok(await GetDbContacts());
+            }
+        }
+
+        private async Task<List<Contact>> GetDbContacts()
+        {
+            return await _context.Contacts.Include(c=>c.Category).ToListAsync();
         }
 
     }

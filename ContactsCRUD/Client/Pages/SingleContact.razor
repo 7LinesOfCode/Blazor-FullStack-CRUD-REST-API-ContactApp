@@ -14,11 +14,50 @@ else
     <h3>Edit @contact.FirstName @contact.LastName</h3>
 }
 
+<EditForm Model="contact" OnSubmit="HandleSubmit">
+    <div>
+        <label for="firstname">First Name</label>
+        <InputText id="firstname" @bind-Value="contact.FirstName" class="form-control"></InputText>
+    </div>
+    <div>
+        <label for="firstname">Last Name</label>
+        <InputText id="lastname" @bind-Value="contact.LastName" class="form-control"></InputText>
+    </div>
+    <div>
+        <label for="phonenumber">Phone Number</label>
+        <InputText id="phonenumber" @bind-Value="contact.PhoneNumber" class="form-control"></InputText>
+    </div>
+    <div>
+        <label for="note">Note</label>
+        <InputText id="note" @bind-Value="contact.Note" class="form-control"></InputText>
+    </div>
+
+    <div>
+        <label>Category</label><br/>
+        <InputSelect @bind-Value="contact.CategoryId" class="form-select">
+            @foreach (var category in ContactService.Categories)
+            {
+                <option value="@category.Id">@category.Name</option>
+            }
+        </InputSelect>
+    </div>
+    <br/>
+    <button type="submit" class="btn btn-primary">@btnText </button>
+</EditForm>
+
 @code {
     [Parameter]
     public int? Id { get; set; }
 
     Contact contact = new Contact { Category = new Category()};
+
+    string btnText = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        btnText = Id is null ? "Save new Contact" : "Update Contact";
+        await ContactService.GetCategories();
+    }
 
     protected override async Task OnParametersSetAsync()
     {
@@ -30,5 +69,10 @@ else
         {
             contact = await ContactService.GetSingleContact((int)Id);
         }
+    }
+
+    async Task HandleSubmit()
+    {
+        
     }
 }

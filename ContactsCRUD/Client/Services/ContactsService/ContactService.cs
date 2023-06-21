@@ -1,4 +1,5 @@
-﻿using System.Net.Http.Json;
+﻿using ContactsCRUD.Shared;
+using System.Net.Http.Json;
 
 
 namespace ContactsCRUD.Client.Services.ContactsService
@@ -15,9 +16,27 @@ namespace ContactsCRUD.Client.Services.ContactsService
         public List<Contact> Contacts { get; set; } = new List<Contact>();
         public List<Category> Categories { get; set; } = new List<Category>();
 
-        public Task GetCategories()
+        public async Task CreateContact(Contact contact)
         {
-            throw new NotImplementedException();
+            var result = await _http.PostAsJsonAsync("api/contact", contact);
+            var response = await result.Content.ReadFromJsonAsync<List<Contact>>();
+            Contacts = response;
+        }
+
+        public async Task DeleteContact(int id)
+        {
+            var result = await _http.DeleteAsync($"api/contact/{id}");
+            var response = await result.Content.ReadFromJsonAsync<List<Contact>>();
+            Contacts = response;
+        }
+
+        public async Task GetCategories()
+        {
+            var result = await _http.GetFromJsonAsync<List<Category>>("api/contact/categories");
+            if (result is not null)
+            {
+                Categories = result;
+            }
         }
 
         public async Task GetContacts()
@@ -40,6 +59,13 @@ namespace ContactsCRUD.Client.Services.ContactsService
             {
                 throw new Exception("Contact not found!");
             }
+        }
+
+        public async Task UpdateContact(Contact contact)
+        {
+            var result = await _http.PutAsJsonAsync($"api/contact/{contact.Id}", contact);
+            var response = await result.Content.ReadFromJsonAsync<List<Contact>>();
+            Contacts = response;
         }
     }
 }
