@@ -29,8 +29,8 @@
             new Contact
             {
                 Id = 2,
-                FirstName = "Net",
-                LastName = "Pc",
+                FirstName = "John",
+                LastName = "Snow",
                 PhoneNumber = "123 123 123",
                 Note = "",
                 CategoryId = 2
