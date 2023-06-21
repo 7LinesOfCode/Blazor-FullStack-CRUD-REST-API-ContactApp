@@ -56,5 +56,3 @@ Contacts.CRUD.Client.Pages:
 				     and has two methods redirecting to https://localhost:7293/contact to create a new contact
 				     and https://localhost:7293/contact/id which is responsible for redirecting to editing a specific contact
 		    SingleContact.razor - razor page showing a specific contact to edit, create or delete a new contact 
-
-Translated with www.DeepL.com/Translator (free version)
