@@ -1,4 +1,4 @@
-##The way to compile applications for Windows
+#The way to compile applications for Windows
 
 ## How to build project steps:
 If you don't have .Net 6:
@@ -26,7 +26,7 @@ Then we can already run the applications through Visual Studio, or the command l
 The application can be found at: https://localhost:7293/
 
 
-### Description of the most relevant classes/pages:
+## Description of the most relevant classes/pages:
 
 ## ContactsCRUD.Shared:
 		    -Category.cs - class which represents the data model of the category of the contact
